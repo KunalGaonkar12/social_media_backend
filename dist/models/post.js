@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 const FeedSchema = new Schema({
-    id: { type: String, unique: true },
+    id: String,
     userId: { type: String, require: true },
     image: { type: String, required: true },
     caption: { type: String, required: true },
