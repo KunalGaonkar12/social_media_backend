@@ -49,7 +49,7 @@ input PostInput {
 
     type Query {
         getPost(ID: ID!): Post
-        getPosts(limit: Int): [Post]!
+        getPosts(limit: Int,id:String): [Post]!
         getUser(ID: ID!): User
         getUsers(limit: Int): [User]!
     }
@@ -70,10 +70,30 @@ const resolvers = {
             return await Post.findById(ID);
         },
 
-        //To get Posts 
-        async getPosts(_, { limit }) {
-            return await Post.find().limit(limit);
-        },
+        //To get Posts based on following
+        async getPosts(_, { limit,id}) {
+
+            try{
+                //
+                const user  = await User.findOne({ id: id });
+
+                if (!user) {
+                    throw new Error("User not found");
+
+                    }
+
+                const followerIds = user.followers;
+
+                //Use the list of follower Ids to query the posts database
+                const posts = await Post.find({ userId: { $in: followerIds } }).limit(limit);
+                return posts;
+
+
+            }catch (error) {
+                console.error(error);
+                throw new Error("Failed get posts");
+            }
+         },
 
         //To get user by id
         async getUser(_,{ID}){
