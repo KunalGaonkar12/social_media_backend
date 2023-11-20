@@ -34,7 +34,7 @@ const typeDefs = `#graphql
         followers:[String]
     }
 
-    input FollowUnFollowImput{
+    input FollowUnFollowInput{
         id:String
         followId:String
     }
@@ -57,7 +57,7 @@ input PostInput {
     type Mutation {
         createPost(postInput: PostInput): String!
         createUser(userInput: UserInput): String!
-        followUnFollowUser(followUnFollowInput:FollowUnFollowImput):String!
+        followUnFollowUser(followUnFollowInput:FollowUnFollowInput):String!
     
 
     }
