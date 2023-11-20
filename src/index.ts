@@ -95,7 +95,7 @@ const resolvers = {
         //To create a user
         async createUser(_, { userInput: {id,fullName,userName,email,followers} }) {
             const res = await new User({id,fullName,userName,email,followers}).save();
-            return res._id;
+            return res.id;
         },
 
         async followUnFollowUser(_,{followUnFollowInput:{id,followId}}){
