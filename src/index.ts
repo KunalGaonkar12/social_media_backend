@@ -31,7 +31,15 @@ const typeDefs = `#graphql
         fullName:String
         userName:String
         email:String
+        followers:[String]
     }
+
+    input FollowUnFollowImput{
+        id:String
+        followId:String
+    }
+
+
 
 input PostInput {
         userId: String
@@ -49,6 +57,8 @@ input PostInput {
     type Mutation {
         createPost(postInput: PostInput): String!
         createUser(userInput: UserInput): String!
+        followUnFollowUser(followUnFollowInput:FollowUnFollowImput):String!
+    
 
     }
 `;
@@ -83,11 +93,48 @@ const resolvers = {
         },
 
         //To create a user
-        async createUser(_, { userInput: {id,fullName,userName,email} }) {
-            const res = await new User({id,fullName,userName,email}).save();
+        async createUser(_, { userInput: {id,fullName,userName,email,followers} }) {
+            const res = await new User({id,fullName,userName,email,followers}).save();
             return res._id;
         },
-    
+
+        async followUnFollowUser(_,{followUnFollowInput:{id,followId}}){
+            try {
+
+                // Log to see the input values
+                console.log("Input:", { id, followId });
+
+                const loggedInUser = await User.findOne({ id: id });
+                if (!loggedInUser) {
+                    throw new Error("Logged in user not found");
+                  }
+            
+             // Check if the user is already in the followers list
+                const indexOfFollowId = loggedInUser.followers.indexOf(followId);
+
+                if (indexOfFollowId !== -1) {
+                        // If the user is already followed  remove them
+                        loggedInUser.followers.splice(indexOfFollowId, 1);
+
+                        // Save the updated user
+                        await loggedInUser.save();
+
+                        return "User unfollowed successfully";
+                } else {
+                        // If the user is not in the followers list, add them
+                        loggedInUser.followers.push(followId);
+
+                        // Save the updated user
+                        await loggedInUser.save();
+
+                        return "User followed successfully";
+                }
+              } catch (error) {
+                console.error(error);
+                throw new Error("Failed to follow user");
+              }
+
+        }
         
     }
 }
