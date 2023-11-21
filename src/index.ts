@@ -13,6 +13,8 @@ const typeDefs = `#graphql
         image: String
         caption: String
         date:String
+        tags:[String]
+        userName:String
        
     }
 
@@ -43,8 +45,10 @@ const typeDefs = `#graphql
 
 input PostInput {
         userId: String
+        userName: String
         image: String
         caption: String
+        tags:[String]
     }
 
     type Query {
@@ -107,8 +111,8 @@ const resolvers = {
     },
     Mutation: {
         //To create a post
-        async createPost(_, { postInput: {userId,image,caption} }) {
-            const res = await new Post({ userId,image, caption}).save();
+        async createPost(_, { postInput: {userId,image,caption,userName,tags} }) {
+            const res = await new Post({ userId,image, caption,userName,tags}).save();
             return res._id;
         },
 
